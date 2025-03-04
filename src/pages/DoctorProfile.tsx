@@ -25,13 +25,6 @@ interface User {
   email?: string;
 }
 
-// Interface for appointment data
-interface Appointment {
-  doctor_id: string;
-  appointment_date: string;
-  appointment_time: string;
-}
-
 const DoctorProfile = () => {
   const { id } = useParams();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -138,12 +131,30 @@ const DoctorProfile = () => {
 
       setBookingStatus('Processing...');
 
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, mobile')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        setBookingStatus(`Failed to book appointment: ${profileError.message}`);
+        return;
+      }
+
+      if (!profileData) {
+        setBookingStatus('Profile data not found');
+        return;
+      }
+
       const { error } = await supabase
         .from('appointments')
         .insert({
           doctor_id: doctor.id,
-          patient_name: user?.email?.split('@')[0] || 'Unknown', 
+          patient_name: profileData.username,
           patient_email: user.email,
+          patient_mobile: profileData.mobile,
           appointment_date: formattedDate,
           appointment_time: selectedTime,
           status: 'Booked'
@@ -214,7 +225,6 @@ const DoctorProfile = () => {
       </Link>
 
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        {/* User status indicator */}
         <div className="mb-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <img
@@ -233,29 +243,6 @@ const DoctorProfile = () => {
                 {doctor.hospital}
               </div>
             </div>
-          </div>
-          <div>
-            {user ? (
-              <div className="text-green-600">
-                Signed in as: {user.email}
-                <button 
-                  onClick={async () => {
-                    await supabase.auth.signOut();
-                    setUser(null);
-                  }}
-                  className="ml-2 text-sm text-blue-600 hover:underline"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setShowLoginModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Sign In
-              </button>
-            )}
           </div>
         </div>
 

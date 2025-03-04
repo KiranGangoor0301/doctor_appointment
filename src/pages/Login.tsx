@@ -8,6 +8,8 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [mobile, setMobile] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRegister, setIsRegister] = useState(false);
@@ -20,13 +22,31 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     try {
       if (isRegister) {
         // Register new user
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
         });
 
-        if (signUpError) throw signUpError;
-        setError('Verification email sent. Please check your inbox.');
+        if (signUpError) {
+          if (signUpError.message.includes('User already registered')) {
+            setError('User already exists. Please sign in.');
+          } else {
+            throw signUpError;
+          }
+        } else {
+          // Insert additional user details into the profile table
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: signUpData.user?.id,
+              username,
+              mobile,
+            });
+
+          if (profileError) throw profileError;
+
+          setError('Verification email sent. Please check your inbox.');
+        }
       } else {
         // Sign in existing user
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -57,6 +77,36 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       )}
       
       <form onSubmit={handleAuth}>
+        {isRegister && (
+          <>
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="username">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="mobile">
+                Mobile Number
+              </label>
+              <input
+                id="mobile"
+                type="text"
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          </>
+        )}
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="email">
             Email

@@ -26,6 +26,7 @@ export interface Database {
           profile_image: string
           bio: string
           created_at: string
+          city: string // Added city column
         }
         Insert: {
           id?: string
@@ -43,6 +44,7 @@ export interface Database {
           profile_image: string
           bio: string
           created_at?: string
+          city: string // Added city column
         }
         Update: {
           id?: string
@@ -60,6 +62,7 @@ export interface Database {
           profile_image?: string
           bio?: string
           created_at?: string
+          city?: string // Added city column
         }
       }
       appointments: {
@@ -68,6 +71,7 @@ export interface Database {
           doctor_id: string
           patient_name: string
           patient_email: string
+          patient_mobile: string // Changed to VARCHAR
           appointment_date: string
           appointment_time: string
           status: string
@@ -78,6 +82,7 @@ export interface Database {
           doctor_id: string
           patient_name: string
           patient_email: string
+          patient_mobile: string // Changed to VARCHAR
           appointment_date: string
           appointment_time: string
           status: string
@@ -88,10 +93,28 @@ export interface Database {
           doctor_id?: string
           patient_name?: string
           patient_email?: string
+          patient_mobile?: string // Changed to VARCHAR
           appointment_date?: string
           appointment_time?: string
           status?: string
           created_at?: string
+        }
+      }
+      profiles: {
+        Row: {
+          id: string
+          username: string
+          mobile: string
+        }
+        Insert: {
+          id: string
+          username: string
+          mobile: string
+        }
+        Update: {
+          id?: string
+          username?: string
+          mobile?: string
         }
       }
     }

@@ -7,6 +7,10 @@ import DoctorProfile from './pages/DoctorProfile';
 import Login from './pages/Login';
 
 function App() {
+  const handleLoginSuccess = () => {
+    window.location.href = '/';
+  };
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
@@ -16,9 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/doctors" element={<DoctorList />} />
             <Route path="/doctor/:id" element={<DoctorProfile />} />
-            <Route path="/login" element={<Login onLoginSuccess={function (): void {
-              throw new Error('Function not implemented.');
-            } } />} />
+            <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           </Routes>
         </main>
       </div>
