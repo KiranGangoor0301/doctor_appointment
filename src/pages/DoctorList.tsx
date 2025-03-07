@@ -227,18 +227,27 @@ const DoctorList = () => {
       </div>
 
       {showLoginModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-semibold mb-6 text-center">Please sign in to book an appointment</h2>
-            <Login onLoginSuccess={handleLoginSuccess} />
-            <button 
-              onClick={() => setShowLoginModal(false)} 
-              className="mt-4 w-full text-gray-600 hover:underline"
-            >
-              Cancel
-            </button>
+        <>
+          {/* Semi-transparent overlay */}
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" 
+               onClick={() => setShowLoginModal(false)}
+          />
+          {/* Modal content */}
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Please sign in to book an appointment</h2>
+                <button 
+                  onClick={() => setShowLoginModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              <Login onLoginSuccess={handleLoginSuccess} />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

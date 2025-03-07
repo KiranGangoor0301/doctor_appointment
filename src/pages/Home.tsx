@@ -67,7 +67,7 @@ const Home = () => {
                   </svg>
                 </div>
               </div>
-              <div className="font-medium">Book Appointment</div>
+              <div className="font-medium cursor-pointer"  onClick={() => window.location.href = '/doctors'}>Book Appointment</div>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
